@@ -130,22 +130,6 @@ export class ProductsController {
           res.json({ mensaje: 'Producto actualizado correctamente' });
         }
       });
-
-
-
-
-      // const uploadedFilename = req.file.filename;
-      // const updatedProduct = await this.productsModel.update(
-      //   { nameProd: req.body.nameProd, price: req.body.price, nameImg: uploadedFilename, description: req.body.description },
-      //   {
-      //     where: {
-      //       idProd: idProd
-      //     }
-      //   });
-      // if (updatedProduct == 0) {
-      //   return res.status(404).json({ message: "No se encontró el producto" });
-      // }
-      // res.json({ message: "Producto actualizado" });
     }
     catch (error) {
       res.status(400).json({ error: 'error actualizando el producto' })
