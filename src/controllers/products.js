@@ -50,7 +50,7 @@ export class ProductsController {
       const __dirname = dirname(fileURLToPath(import.meta.url));
 
       // Ruta del archivo de imagen en el servidor
-      const filePath = path.resolve(__dirname, `../public/${req.params.nameImg}`);
+      const filePath = path.resolve(__dirname, `../public/${product.nameImg}`);
       console.log(__dirname);
       console.log(filePath);
 

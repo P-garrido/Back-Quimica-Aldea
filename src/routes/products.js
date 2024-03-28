@@ -10,7 +10,7 @@ export const createProductsRouter = ({ productsModel }) => {
 
   productsRouter.get('/', productsController.getAll);
   productsRouter.post('/', upload.single('file'), productsController.create);
-  productsRouter.delete('/:id/:nameImg', productsController.delete);
+  productsRouter.delete('/:id', productsController.delete);
   productsRouter.patch('/:id', productsController.update);
 
 
