@@ -10,6 +10,10 @@ export const createOrdersRouter = ({ ordersModel }) => {
 
 
   ordersRouter.get('/', ordersController.getAll);
+  ordersRouter.post('/', ordersController.create);
+  ordersRouter.delete('/:id', ordersController.delete);
+  ordersRouter.patch('/:id', ordersController.update);
+
 
   return ordersRouter
 }

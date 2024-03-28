@@ -11,6 +11,7 @@ export const createUsersRouter = ({ usersModel }) => {
 
   usersRouter.get('/', usersController.getAll);
   usersRouter.get('/:id', usersController.getById);
+  usersRouter.post('/', usersController.create);
   usersRouter.delete('/:id', usersController.delete);
   usersRouter.patch('/:id', usersController.update);
 

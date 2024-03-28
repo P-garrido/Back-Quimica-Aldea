@@ -20,23 +20,7 @@ export const OrderProductsModel = sequelize.define(
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false
-    },
-    adress: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    mail: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    phone: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
+    }
   },
   {
     tableName: 'ProductosPedidos',
@@ -45,5 +29,5 @@ export const OrderProductsModel = sequelize.define(
 );
 
 
-OrdersModel.hasMany(OrderProductsModel, { foreignKey: 'idOrder' });
+OrdersModel.hasMany(OrderProductsModel, { foreignKey: 'idOrder', onDelete: 'CASCADE' });
 OrderProductsModel.belongsTo(ProductModel, { foreignKey: 'idProd' });
