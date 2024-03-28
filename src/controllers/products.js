@@ -96,10 +96,6 @@ export class ProductsController {
       const __dirname = dirname(fileURLToPath(import.meta.url));
       const filePath = path.resolve(__dirname, `../public/${product.nameImg}`);
 
-
-
-
-
       fs.access(filePath, fs.constants.F_OK, async (err) => {
         if (!err) {
           // Eliminar el archivo de imagen del servidor
@@ -119,10 +115,8 @@ export class ProductsController {
             if (updatedProduct == 0) {
               return res.status(404).json({ message: "No se encontró el producto" });
             }
-            res.json({ mensaje: 'Producto avtualizado y archivo eliminado correctamente' });
+            res.json({ mensaje: 'Producto actualizado y archivo eliminado correctamente' });
           });
-
-          res.json({ message: "Producto actualizado" });
         } else {
           // Si el archivo de imagen no existe, actualizar solo el producto de la base de datos
           const uploadedFilename = req.file.filename;
