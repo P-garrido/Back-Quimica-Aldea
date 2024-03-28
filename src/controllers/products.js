@@ -62,16 +62,28 @@ export class ProductsController {
 
 
   update = async (req, res) => {
-    // const result = validatePartialProduct(req.body)
+    // const result = validatePartialService(req.body.service);
     // if (!result.success) {
     //   return res.status(404).json({ error: JSON.parse(result.error.message) });
     // }
 
+    const idProd = req.params.id;
     try {
-
+      const uploadedFilename = req.file.filename;
+      const updatedProduct = await this.productsModel.update(
+        { nameProd: req.body.nameProd, price: req.body.price, nameImg: uploadedFilename, description: req.body.description },
+        {
+          where: {
+            idProd: idProd
+          }
+        });
+      if (updatedProduct == 0) {
+        return res.status(404).json({ message: "No se encontró el producto" });
+      }
+      res.json({ message: "Producto actualizado" });
     }
     catch (error) {
-      res.send(error)
+      res.status(400).json({ error: 'error actualizando el producto' })
     }
 
   }
