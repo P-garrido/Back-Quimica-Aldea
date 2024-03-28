@@ -51,8 +51,6 @@ export class ProductsController {
 
       // Ruta del archivo de imagen en el servidor
       const filePath = path.resolve(__dirname, `../public/${product.nameImg}`);
-      console.log(__dirname);
-      console.log(filePath);
 
       // Verificar si el archivo de imagen existe
       fs.access(filePath, fs.constants.F_OK, async (err) => {
@@ -90,18 +88,70 @@ export class ProductsController {
 
     const idProd = req.params.id;
     try {
-      const uploadedFilename = req.file.filename;
-      const updatedProduct = await this.productsModel.update(
-        { nameProd: req.body.nameProd, price: req.body.price, nameImg: uploadedFilename, description: req.body.description },
-        {
-          where: {
-            idProd: idProd
-          }
-        });
-      if (updatedProduct == 0) {
-        return res.status(404).json({ message: "No se encontró el producto" });
+      const product = await this.productsModel.findOne({ where: { idProd } });
+      if (!product) {
+        return res.status(404).json({ message: "Producto no encontrado" });
       }
-      res.json({ message: "Producto actualizado" });
+
+      const __dirname = dirname(fileURLToPath(import.meta.url));
+      const filePath = path.resolve(__dirname, `../public/${product.nameImg}`);
+
+
+
+
+
+      fs.access(filePath, fs.constants.F_OK, async (err) => {
+        if (!err) {
+          // Eliminar el archivo de imagen del servidor
+          fs.unlink(filePath, async (err) => {
+            if (err) {
+              return res.status(500).json({ mensaje: 'Error al eliminar el archivo' });
+            }
+            // Actualizar el producto de la base de datos después de eliminar el archivo
+            const uploadedFilename = req.file.filename;
+            const updatedProduct = await this.productsModel.update(
+              { nameProd: req.body.nameProd, price: req.body.price, nameImg: uploadedFilename, description: req.body.description },
+              {
+                where: {
+                  idProd: idProd
+                }
+              });
+            if (updatedProduct == 0) {
+              return res.status(404).json({ message: "No se encontró el producto" });
+            }
+            res.json({ mensaje: 'Producto avtualizado y archivo eliminado correctamente' });
+          });
+
+          res.json({ message: "Producto actualizado" });
+        } else {
+          // Si el archivo de imagen no existe, actualizar solo el producto de la base de datos
+          const uploadedFilename = req.file.filename;
+          await this.productsModel.update(
+            { nameProd: req.body.nameProd, price: req.body.price, nameImg: uploadedFilename, description: req.body.description },
+            {
+              where: {
+                idProd: idProd
+              }
+            });
+          res.json({ mensaje: 'Producto actualizado correctamente' });
+        }
+      });
+
+
+
+
+      // const uploadedFilename = req.file.filename;
+      // const updatedProduct = await this.productsModel.update(
+      //   { nameProd: req.body.nameProd, price: req.body.price, nameImg: uploadedFilename, description: req.body.description },
+      //   {
+      //     where: {
+      //       idProd: idProd
+      //     }
+      //   });
+      // if (updatedProduct == 0) {
+      //   return res.status(404).json({ message: "No se encontró el producto" });
+      // }
+      // res.json({ message: "Producto actualizado" });
     }
     catch (error) {
       res.status(400).json({ error: 'error actualizando el producto' })
