@@ -1,4 +1,7 @@
 import { validateProduct, validatePartialProduct } from "../schemas/products.js";
+import fs from 'fs';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 
 export class ProductsController {
@@ -35,26 +38,44 @@ export class ProductsController {
   }
 
 
-
   delete = async (req, res) => {
-
     const idProd = req.params.id;
     try {
-      const result = await this.productsModel.destroy({
-        where: {
-          idProd: idProd
+      // Buscar el producto en la base de datos para obtener el nombre del archivo de imagen
+      const product = await this.productsModel.findOne({ where: { idProd } });
+      if (!product) {
+        return res.status(404).json({ message: "Producto no encontrado" });
+      }
+
+      const __dirname = dirname(fileURLToPath(import.meta.url));
+
+      // Ruta del archivo de imagen en el servidor
+      const filePath = path.resolve(__dirname, `../public/${req.params.nameImg}`);
+      console.log(__dirname);
+      console.log(filePath);
+
+      // Verificar si el archivo de imagen existe
+      fs.access(filePath, fs.constants.F_OK, async (err) => {
+        if (!err) {
+          // Eliminar el archivo de imagen del servidor
+          fs.unlink(filePath, async (err) => {
+            if (err) {
+              return res.status(500).json({ mensaje: 'Error al eliminar el archivo' });
+            }
+            // Eliminar el producto de la base de datos después de eliminar el archivo
+            await this.productsModel.destroy({ where: { idProd } });
+            res.json({ mensaje: 'Producto y archivo eliminados correctamente' });
+          });
+        } else {
+          // Si el archivo de imagen no existe, eliminar solo el producto de la base de datos
+          await this.productsModel.destroy({ where: { idProd } });
+          res.json({ mensaje: 'Producto eliminado correctamente' });
         }
       });
-      if (result == 0) {
-        return res.status(404).json({ message: "No se encontró el producto" });
-      }
-      res.json({ message: "Producto eliminado" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ mensaje: 'Error interno del servidor' });
     }
-    catch (error) {
-      res.status(400).json({ error: 'error eliminando el producto' })
-    }
-
-
   }
 
 
