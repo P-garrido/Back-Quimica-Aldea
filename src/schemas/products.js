@@ -1,12 +1,9 @@
 import z from 'zod';
 
 const productsSchema = z.object({
-  name: z.string({
+  nameProd: z.string({
     invalid_type_error: "El nombre tiene que ser una cadena de texto.",
     required_error: 'El nombre es requerido.'
-  }),
-  nameImg: z.string({
-    required_error: 'La imagen es requerida.'
   }),
   price: z.number({
     invalid_type_error: "El precio tiene que ser un número.",
