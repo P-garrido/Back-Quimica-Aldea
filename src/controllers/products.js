@@ -14,7 +14,16 @@ export class ProductsController {
   getAll = async (req, res) => {
     try {
       const products = await this.productsModel.findAll();
-      res.json(products);
+      const productsWithImage = products.map(product => {
+        return {
+          idProd: product.idProd,
+          nameProd: product.nameProd,
+          urlImg: `http://localhost:3000/images/${product.nameImg}`,
+          description: product.description,
+          price: product.price
+        }
+      })
+      res.json(productsWithImage);
     }
     catch (error) {
       console.error(error)

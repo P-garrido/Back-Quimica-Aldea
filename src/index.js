@@ -17,16 +17,6 @@ app.use(cors());
 app.use(json());
 app.use('/images', express.static('src/public'));
 
-
-app.use('/products', createProductsRouter({ productsModel: ProductModel }));
-app.use('/users', createUsersRouter({ usersModel: UserModel }));
-app.use('/orders', createOrdersRouter({ ordersModel: OrdersModel }));
-app.use('/orderproducts', createOrdersProductsRouter({ ordersProductsModel: OrderProductsModel }));
-
-
-
-
-
 (async () => {
   try {
     await sequelize.sync();
@@ -37,6 +27,18 @@ app.use('/orderproducts', createOrdersProductsRouter({ ordersProductsModel: Orde
     console.error('Unable to connect to the database:', error);
   }
 })();
+
+
+app.use('/products', createProductsRouter({ productsModel: ProductModel }));
+app.use('/users', createUsersRouter({ usersModel: UserModel }));
+app.use('/orders', createOrdersRouter({ ordersModel: OrdersModel }));
+app.use('/orderproducts', createOrdersProductsRouter({ ordersProductsModel: OrderProductsModel }));
+
+
+
+
+
+
 
 
 
