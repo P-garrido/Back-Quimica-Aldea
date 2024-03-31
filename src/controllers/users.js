@@ -39,7 +39,7 @@ export class UsersController {
   create = async (req, res) => {
 
     try {
-      const newUser = await this.usersModel.create({ nomUser: req.body.nomUser, pass: req.body.pass, adress: req.body.adress, phone: req.body.phone, mail: req.body.mail });
+      const newUser = await this.usersModel.create({ nomUser: req.body.nomUser, pass: req.body.pass, adress: req.body.adress, phone: req.body.phone, mail: req.body.mail, type: req.body.type });
       res.status(201).json(newUser);
     }
     catch (err) {
@@ -66,13 +66,38 @@ export class UsersController {
 
     try {
       const idUser = req.params.id;
-      await this.usersModel.update({ nomUser: req.body.nomUser, pass: req.body.pass, adress: req.body.adress, phone: req.body.phone, mail: req.body.mail },
+      await this.usersModel.update({ nomUser: req.body.nomUser, pass: req.body.pass, adress: req.body.adress, phone: req.body.phone, mail: req.body.mail, type: req.body.type },
         { where: { idUser } });
       res.json({ message: "Usuario actualizado" });
     }
     catch (err) {
       console.error(err);
       res.json({ error: err });
+    }
+  }
+
+
+  login = async (req, res) => {
+    const username = req.body.username;
+    const pass = req.body.password;
+
+    try {
+      const user = await this.usersModel.findOne({ where: { nomUser: username, pass: password } });
+
+      if (user) {
+        const payload = {
+          userName: userName,
+          password: pass,
+        };
+        const token = generateToken(payload);
+        res.json({ token, user });
+      } else {
+        res.status(404).send({ message: 'user not found' });
+      }
+    }
+
+    catch (err) {
+      res.json({ error: err })
     }
   }
 

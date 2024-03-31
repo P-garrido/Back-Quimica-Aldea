@@ -33,6 +33,10 @@ export const UserModel = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
       unique: true
+    },
+    type: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   },
   {
