@@ -1,4 +1,4 @@
-
+import { generateToken, validateToken } from "../middlewares/token.js";
 
 
 export class UsersController {
@@ -39,8 +39,17 @@ export class UsersController {
   create = async (req, res) => {
 
     try {
-      const newUser = await this.usersModel.create({ nomUser: req.body.nomUser, pass: req.body.pass, adress: req.body.adress, phone: req.body.phone, mail: req.body.mail, type: req.body.type });
-      res.status(201).json(newUser);
+      const newUser = await this.usersModel.create({ nomUser: req.body.username, pass: req.body.password, adress: req.body.adress, phone: req.body.phone, mail: req.body.mail, type: req.body.type });
+      if (newUser) {
+        const payload = {
+          userName: newUser.username,
+          password: newUser.password,
+        };
+        const token = generateToken(payload);
+        res.json({ token, newUser });
+      } else {
+        res.status(404).send({ message: 'user not found' });
+      }
     }
     catch (err) {
       console.error(err);
@@ -79,16 +88,18 @@ export class UsersController {
 
   login = async (req, res) => {
     const username = req.body.username;
-    const pass = req.body.password;
+    const password = req.body.password;
 
     try {
       const user = await this.usersModel.findOne({ where: { nomUser: username, pass: password } });
 
+
       if (user) {
         const payload = {
-          userName: userName,
-          password: pass,
+          userName: username,
+          password: password,
         };
+        console.log(payload)
         const token = generateToken(payload);
         res.json({ token, user });
       } else {
