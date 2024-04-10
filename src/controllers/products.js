@@ -102,43 +102,58 @@ export class ProductsController {
         return res.status(404).json({ message: "Producto no encontrado" });
       }
 
-      const __dirname = dirname(fileURLToPath(import.meta.url));
-      const filePath = path.resolve(__dirname, `../public/${product.nameImg}`);
-
-      fs.access(filePath, fs.constants.F_OK, async (err) => {
-        if (!err) {
-          // Eliminar el archivo de imagen del servidor
-          fs.unlink(filePath, async (err) => {
-            if (err) {
-              return res.status(500).json({ mensaje: 'Error al eliminar el archivo' });
-            }
-            // Actualizar el producto de la base de datos después de eliminar el archivo
+      if (req.file) {
+        const __dirname = dirname(fileURLToPath(import.meta.url));
+        const filePath = path.resolve(__dirname, `../public/${product.nameImg}`);
+        fs.access(filePath, fs.constants.F_OK, async (err) => {
+          if (!err) {
+            // Eliminar el archivo de imagen del servidor
+            fs.unlink(filePath, async (err) => {
+              if (err) {
+                return res.status(500).json({ mensaje: 'Error al eliminar el archivo' });
+              }
+              // Actualizar el producto de la base de datos después de eliminar el archivo
+              const uploadedFilename = req.file.filename;
+              const updatedProduct = await this.productsModel.update(
+                { nameProd: req.body.nameProd, price: req.body.price, nameImg: uploadedFilename, description: req.body.description },
+                {
+                  where: {
+                    idProd: idProd
+                  }
+                });
+              if (updatedProduct == 0) {
+                return res.status(404).json({ message: "No se encontró el producto" });
+              }
+              res.json({ mensaje: 'Producto actualizado y archivo eliminado correctamente' });
+            });
+          } else {
+            // Si el archivo de imagen no existe, actualizar solo el producto de la base de datos
             const uploadedFilename = req.file.filename;
-            const updatedProduct = await this.productsModel.update(
+            await this.productsModel.update(
               { nameProd: req.body.nameProd, price: req.body.price, nameImg: uploadedFilename, description: req.body.description },
               {
                 where: {
                   idProd: idProd
                 }
               });
-            if (updatedProduct == 0) {
-              return res.status(404).json({ message: "No se encontró el producto" });
+            res.json({ mensaje: 'Producto actualizado correctamente' });
+          }
+        });
+      }
+      else {
+        const uploadedFilename = product.nameImg;
+        await this.productsModel.update(
+          { nameProd: req.body.nameProd, price: req.body.price, nameImg: uploadedFilename, description: req.body.description },
+          {
+            where: {
+              idProd: idProd
             }
-            res.json({ mensaje: 'Producto actualizado y archivo eliminado correctamente' });
           });
-        } else {
-          // Si el archivo de imagen no existe, actualizar solo el producto de la base de datos
-          const uploadedFilename = req.file.filename;
-          await this.productsModel.update(
-            { nameProd: req.body.nameProd, price: req.body.price, nameImg: uploadedFilename, description: req.body.description },
-            {
-              where: {
-                idProd: idProd
-              }
-            });
-          res.json({ mensaje: 'Producto actualizado correctamente' });
-        }
-      });
+        res.json({ mensaje: 'Producto actualizado correctamente' });
+      }
+
+
+
     }
     catch (error) {
       res.status(400).json({ error: 'error actualizando el producto' })
