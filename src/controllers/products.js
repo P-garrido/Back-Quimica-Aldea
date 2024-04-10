@@ -2,6 +2,7 @@ import { validateProduct, validatePartialProduct } from "../schemas/products.js"
 import fs from 'fs';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { Op } from 'sequelize';
 
 
 export class ProductsController {
@@ -159,6 +160,35 @@ export class ProductsController {
       res.status(400).json({ error: 'error actualizando el producto' })
     }
 
+  }
+
+
+
+  filter = async (req, res) => {
+    try {
+      const filter = req.params.nameProd;
+      const products = await this.productsModel.findAll({
+        where: {
+          nameProd: {
+            [Op.like]: `%${filter}%`,
+          },
+        },
+      });
+      const productsWithImage = products.map(product => {
+        return {
+          idProd: product.idProd,
+          nameProd: product.nameProd,
+          urlImg: `http://localhost:3000/images/${product.nameImg}`,
+          description: product.description,
+          price: product.price
+        }
+      })
+      res.json(productsWithImage);
+    }
+    catch (e) {
+      console.log(e);
+      res.json({ error: e })
+    }
   }
 
 
