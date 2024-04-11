@@ -1,3 +1,6 @@
+import { OrderProductsModel } from "../models/order-product.js";
+import { ProductModel } from "../models/products.js";
+import { UserModel } from "../models/users.js";
 
 
 
@@ -10,7 +13,7 @@ export class OrdersController {
   getAll = async (req, res) => {
 
     try {
-      const orders = await this.ordersModel.findAll();
+      const orders = await this.ordersModel.findAll({ include: [{ model: OrderProductsModel, include: [{ model: ProductModel }] }, { model: UserModel }] });
       res.json(orders);
     }
     catch (err) {
@@ -21,7 +24,7 @@ export class OrdersController {
 
   create = async (req, res) => {
     try {
-      const newOrder = this.ordersModel.create({ date: req.body.date, idUser: req.body.idUser, ammount: req.body.ammount, adress: req.body.adress, phone: req.body.phone, mail: req.body.mail, name: req.body.name });
+      const newOrder = this.ordersModel.create({ date: req.body.date, idUser: req.body.idUser, ammount: req.body.ammount, address: req.body.address, phone: req.body.phone, mail: req.body.mail, name: req.body.name });
       res.status(201).json(newOrder);
     }
     catch (err) {
@@ -48,7 +51,7 @@ export class OrdersController {
 
     try {
       const idOrder = req.params.id;
-      await this.ordersModel.update({ date: req.body.date, idUser: req.body.idUser, ammount: req.body.ammount, adress: req.body.adress, phone: req.body.phone, mail: req.body.mail, name: req.body.name },
+      await this.ordersModel.update({ date: req.body.date, idUser: req.body.idUser, ammount: req.body.ammount, adress: req.body.adress, phone: req.body.phone, mail: req.body.mail, name: req.body.name, delivered: req.body.delivered },
         { where: { idOrder } });
       res.json({ message: "Orden actualizada" });
     }

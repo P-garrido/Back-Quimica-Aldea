@@ -1,3 +1,4 @@
+import { ProductModel } from "../models/products.js";
 
 
 
@@ -10,7 +11,7 @@ export class OrdersProductsController {
   getAll = async (req, res) => {
 
     try {
-      const ordersProducts = await this.ordersProductsModel.findAll();
+      const ordersProducts = await this.ordersProductsModel.findAll({ include: [{ model: ProductModel }] });
       res.json(ordersProducts);
     }
     catch (err) {

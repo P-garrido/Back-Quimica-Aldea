@@ -18,14 +18,14 @@ export const OrdersModel = sequelize.define(
     },
     idUser: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       autoIncrement: false
     },
     ammount: {
       type: DataTypes.DECIMAL,
       allowNull: false
     },
-    adress: {
+    address: {
       type: DataTypes.STRING,
       allowNull: true
     },
@@ -40,6 +40,11 @@ export const OrdersModel = sequelize.define(
     name: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    delivered: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   },
   {
