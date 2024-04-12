@@ -24,7 +24,7 @@ export class OrdersController {
 
   create = async (req, res) => {
     try {
-      const newOrder = this.ordersModel.create({ date: req.body.date, idUser: req.body.idUser, ammount: req.body.ammount, address: req.body.address, phone: req.body.phone, mail: req.body.mail, name: req.body.name });
+      const newOrder = await this.ordersModel.create({ date: req.body.date, idUser: req.body.idUser, ammount: req.body.ammount, address: req.body.address, phone: req.body.phone, mail: req.body.mail, name: req.body.name });
       res.status(201).json(newOrder);
     }
     catch (err) {
